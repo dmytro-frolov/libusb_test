@@ -1,22 +1,10 @@
-/* demo usb device-controlling program.
-   (c) Andrei Borovsky
-   You can find more information on http://symmetrica.net/ */ 
-
-#define LINUX
-
-#ifdef WINDOWS
-#include "libusb.h"
-#endif
-#ifdef LINUX
-#include <libusb-1.0/libusb.h>
-#endif
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <libusb-1.0/libusb.h>
 
-#define DEV_VID 0x1D34
-#define DEV_PID 0x0004
+#define DEV_VID 0x1781// 0x1781 jpnes //0x16c0 asp
+#define DEV_PID 0x0a96// 0x0a96 //0x05dc
 #define DEV_CONFIG 1
 #define DEV_INTF 0
 #define EP_IN 0x81
@@ -31,15 +19,16 @@ int main(int argc, char * argv[])
 	int ret;
 	char r, g, b;
 	unsigned char buf[8];
-	if (argc != 4) {
+/*	if (argc != 4) {
 		printf("Использование: %s r g b\n", argv[0]);
 		return -1;
 	}
 	r = atoi(argv[1]);
 	g = atoi(argv[2]);
 	b = atoi(argv[3]);
+*/
 	libusb_init(NULL);
-	libusb_set_debug(NULL, 3);
+	libusb_set_debug(NULL, 1);
 	handle = libusb_open_device_with_vid_pid(NULL, DEV_VID, DEV_PID);
 	if (handle == NULL) {
 	    printf("Не удалось найти устройство\n");
@@ -58,6 +47,7 @@ int main(int argc, char * argv[])
 		printf("ret:%i\n", ret);    
 		return 0;
 	}
+
 	if (libusb_claim_interface(handle,  DEV_INTF) < 0)
 	{
 		printf("Ошибка интерфейса\n");
@@ -65,6 +55,7 @@ int main(int argc, char * argv[])
 		libusb_exit(NULL);
 		return 0;
 	}
+	/*
 	ret = libusb_control_transfer(handle, LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_OUT, 0x9, 0x200, 0, COMMAND_1, 8, 100);
 	libusb_interrupt_transfer(handle, EP_IN, buf, 8, &ret, 100);
 	ret = libusb_control_transfer(handle, LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_OUT, 0x9, 0x200, 0, COMMAND_2, 8, 100);
@@ -81,6 +72,7 @@ int main(int argc, char * argv[])
 		libusb_exit(NULL);
 		return 0;
 	}
+*/
 	libusb_attach_kernel_driver(handle, DEV_INTF);
 	libusb_close(handle);
 	libusb_exit(NULL);
